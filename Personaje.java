@@ -5,23 +5,42 @@ import javax.swing.ImageIcon;
 public class Personaje {
     private Image imagen;
     private int x, y;
-    public static  int VelocidadX, VelocidadY;
+    public static int VelocidadX, VelocidadY;
     private boolean saltando;
     private static final int GRAVEDAD = 1;
-    
+    private int posicionFija;
+    private int limiteIzquierdo;
+    private int limiteDerecho;
 
     public Personaje() {
         imagen = new ImageIcon(getClass().getResource("/Resources/player.png")).getImage();
-        x = 50;
+        x = 100;
         y = 300;
         VelocidadX = 0;
         VelocidadY = 0;
         saltando = false;
+        posicionFija = 200;
+        limiteIzquierdo = 0;
+        limiteDerecho = 200;
     }
 
     public void mover() {
-        x += VelocidadX;
+
         y += VelocidadY;
+
+        if (x < posicionFija) {
+            x += VelocidadX;
+        } else if (x >= limiteDerecho) {
+            // Si llegó al límite derecho, permitir que se siga moviendo
+            x += VelocidadX;
+        } else {
+            x = VelocidadX;
+        }
+
+        if (x == limiteIzquierdo) {
+            x -= VelocidadX;
+        }
+
         if (y >= 300) {
             y = 300;
             VelocidadY = 0;
@@ -34,7 +53,6 @@ public class Personaje {
             VelocidadX = 0;
         }
     }
-    
 
     public void dibujar(Graphics g) {
         g.drawImage(imagen, x, y, null);
@@ -74,17 +92,17 @@ public class Personaje {
     public int getX() {
         return x;
     }
-    
+
     public int getY() {
         return y;
     }
-    
+
     public int getVelocidadX() {
         return VelocidadX;
     }
-    
+
     public int getVelocidadY() {
         return VelocidadY;
     }
-    
+
 }
