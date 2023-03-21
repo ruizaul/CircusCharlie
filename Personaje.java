@@ -18,9 +18,8 @@ public class Personaje {
         VelocidadX = 0;
         VelocidadY = 0;
         saltando = false;
-        
         limiteIzquierdo = 0;
-        limiteDerecho = 700;
+        limiteDerecho = 300;
     }
 
     public void mover() {
@@ -28,11 +27,11 @@ public class Personaje {
         x += VelocidadX;
      
         if (x >= limiteDerecho) {
-            x = VelocidadX;
+            x = limiteDerecho;
         }
 
         if (x <= limiteIzquierdo) {
-            x = VelocidadX;
+            x = limiteIzquierdo;
         }
 
         if (y >= 300) {
@@ -70,7 +69,7 @@ public class Personaje {
     public void saltarDerecha() {
         if (!saltando) {
             VelocidadX = 40; // Velocidad hacia la derecha
-            VelocidadY = -5; // Velocidad hacia arriba
+            VelocidadY = -20; // Velocidad hacia arriba
             saltando = true;
         }
     }
@@ -78,7 +77,7 @@ public class Personaje {
     public void saltarIzquierda() {
         if (!saltando) {
             VelocidadX = -40; // Velocidad hacia la derecha
-            VelocidadY = -5; // Velocidad hacia arriba
+            VelocidadY = -20; // Velocidad hacia arriba
             saltando = true;
         }
     }
