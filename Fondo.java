@@ -7,20 +7,16 @@ public class Fondo {
     private Image imagen;
     private int posX;
     private int imagenAncho;
-    private int limiteIzquierdo;
+    
 
     public Fondo() {
         imagen = new ImageIcon(getClass().getResource("/Resources/background.png")).getImage();
         imagenAncho = imagen.getWidth(null);
         posX = 0;
-        limiteIzquierdo = 50;
+        
     }
 
     public void mover(int velocidad) {
-        // Detener el fondo en el límite izquierdo
-        if (posX < limiteIzquierdo) {
-            posX = limiteIzquierdo;
-        }
 
     }
 

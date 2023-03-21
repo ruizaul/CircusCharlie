@@ -8,7 +8,7 @@ public class Personaje {
     public static int VelocidadX, VelocidadY;
     private boolean saltando;
     private static final int GRAVEDAD = 1;
-    private int posicionFija;
+    private int limiteDerecho;
     private int limiteIzquierdo;
 
     public Personaje() {
@@ -18,21 +18,21 @@ public class Personaje {
         VelocidadX = 0;
         VelocidadY = 0;
         saltando = false;
-        posicionFija = 200;
+        
         limiteIzquierdo = 0;
+        limiteDerecho = 700;
     }
 
     public void mover() {
         y += VelocidadY;
-
-        if (x < posicionFija) {
-            x += VelocidadX;
-        } else {
-            x += 0.1;
+        x += VelocidadX;
+     
+        if (x >= limiteDerecho) {
+            x = VelocidadX;
         }
 
         if (x <= limiteIzquierdo) {
-            x -= VelocidadX;
+            x = VelocidadX;
         }
 
         if (y >= 300) {
@@ -62,7 +62,7 @@ public class Personaje {
 
     public void saltar() {
         if (!saltando) {
-            VelocidadY = -30; // Velocidad hacia arriba
+            VelocidadY = -20; // Velocidad hacia arriba
             saltando = true;
         }
     }
