@@ -10,7 +10,6 @@ public class Personaje {
     private static final int GRAVEDAD = 1;
     private int posicionFija;
     private int limiteIzquierdo;
-    private int limiteDerecho;
 
     public Personaje() {
         imagen = new ImageIcon(getClass().getResource("/Resources/player.png")).getImage();
@@ -21,23 +20,18 @@ public class Personaje {
         saltando = false;
         posicionFija = 200;
         limiteIzquierdo = 0;
-        limiteDerecho = 200;
     }
 
     public void mover() {
-
         y += VelocidadY;
 
         if (x < posicionFija) {
             x += VelocidadX;
-        } else if (x >= limiteDerecho) {
-            // Si llegó al límite derecho, permitir que se siga moviendo
-            x += VelocidadX;
         } else {
-            x = VelocidadX;
+            x += 0.1;
         }
 
-        if (x == limiteIzquierdo) {
+        if (x <= limiteIzquierdo) {
             x -= VelocidadX;
         }
 

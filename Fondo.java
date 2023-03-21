@@ -13,16 +13,15 @@ public class Fondo {
         imagen = new ImageIcon(getClass().getResource("/Resources/background.png")).getImage();
         imagenAncho = imagen.getWidth(null);
         posX = 0;
-        limiteIzquierdo = 200;
+        limiteIzquierdo = 50;
     }
 
     public void mover(int velocidad) {
-        if (posX > limiteIzquierdo) {
-            posX -= velocidad;
+        // Detener el fondo en el límite izquierdo
+        if (posX < limiteIzquierdo) {
+            posX = limiteIzquierdo;
         }
-        if (posX < limiteIzquierdo - imagenAncho) {
-            posX = limiteIzquierdo - imagenAncho;
-        }
+
     }
 
     public void dibujar(Graphics g, int personajeX) {
