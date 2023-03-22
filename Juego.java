@@ -42,9 +42,8 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
             public void run() {
                 while (true) {
                     personaje.mover();
-                    fondo.mover(personaje.getVelocidadX(), personaje.getX());
                     try {
-                        Thread.sleep(16); // 60 fps
+                        Thread.sleep(6); // 60 fps
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -59,7 +58,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                         while (true) {
                             fondo.mover(personaje.getVelocidadX(), personaje.getX());
                             try {
-                                Thread.sleep(16); // 60 fps
+                                Thread.sleep(6); // 60 fps
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
