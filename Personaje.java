@@ -12,9 +12,12 @@ public class Personaje {
     private int limiteIzquierdo;
 
     public Personaje() {
-        imagen = new ImageIcon(getClass().getResource("/Resources/player.png")).getImage();
-        x = 100;
-        y = 300;
+        ImageIcon ii = new ImageIcon(getClass().getResource("/Resources/player1.png"));
+        Image img = ii.getImage();
+        imagen = img.getScaledInstance(50, 50, Image.SCALE_SMOOTH); // Cambia el tamaño a 50x50
+
+        x = 0;
+        y = 100;
         VelocidadX = 0;
         VelocidadY = 0;
         saltando = false;
@@ -25,7 +28,7 @@ public class Personaje {
     public void mover() {
         y += VelocidadY;
         x += VelocidadX;
-     
+
         if (x >= limiteDerecho) {
             x = limiteDerecho;
         }
@@ -34,8 +37,8 @@ public class Personaje {
             x = limiteIzquierdo;
         }
 
-        if (y >= 300) {
-            y = 300;
+        if (y >= 165) {
+            y = 165;
             VelocidadY = 0;
             saltando = false;
         } else {

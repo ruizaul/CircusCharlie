@@ -21,7 +21,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
 
     public void iniciarJuego() {
         ventana = new JFrame("Mi juego");
-        ventana.setSize(800, 600);
+        ventana.setSize(800, 400);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ventana.setLocationRelativeTo(null);
 
@@ -43,7 +43,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                 while (true) {
                     personaje.mover();
                     try {
-                        Thread.sleep(6); // 60 fps
+                        Thread.sleep(16); // 60 fps
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -52,20 +52,20 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
         });
         movimientoPersonaje.start();
 
-                // Crear el hilo para el movimiento del personaje
-                movimientoFondo = new Thread(new Runnable() {
-                    public void run() {
-                        while (true) {
-                            fondo.mover(personaje.getVelocidadX(), personaje.getX());
-                            try {
-                                Thread.sleep(6); // 60 fps
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
+        // Crear el hilo para el movimiento del personaje
+        movimientoFondo = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    fondo.mover(personaje.getVelocidadX(), personaje.getX());
+                    try {
+                        Thread.sleep(6); // 60 fps
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                });
-                movimientoFondo.start();
+                }
+            }
+        });
+        movimientoFondo.start();
 
         // Crear el hilo para la música de fondo
         musicaFondo = new Thread(new Runnable() {
