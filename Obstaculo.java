@@ -10,7 +10,7 @@ public class Obstaculo {
     public static int VelocidadX, VelocidadY;
 
     private int contador = 0;
-    private static final int INTERVALO = 15;
+    private static final int INTERVALO = 10;
 
     private boolean caminando;
     private Image imagenParado;
@@ -53,7 +53,7 @@ public class Obstaculo {
 
         if (contador >= INTERVALO) {
             Random rnd = new Random();
-            if (rnd.nextDouble() < 0.1) {
+            if (rnd.nextDouble() < 0.11) {
                 obstaculos.add(new Obstaculo());
                 VelocidadX = 5;
                 caminando = true;
