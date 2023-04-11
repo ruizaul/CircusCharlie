@@ -38,6 +38,6 @@ public class Fondo {
     }
 
     public void dibujar(Graphics g, int personajeX) {
-        g.drawImage(imagen, posX, -80, null);
+        g.drawImage(imagen, posX, -60, null);
     }
 }

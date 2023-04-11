@@ -12,10 +12,12 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
     private JFrame ventana;
     private Fondo fondo;
     private Personaje personaje;
+    private Obstaculo obstaculo;
     private Timer temporizador;
     private Sonido sonidoFondo;
 
     private Thread movimientoPersonaje;
+    private Thread movimientoObstaculo;
     private Thread movimientoFondo;
     private Thread musicaFondo;
 
@@ -29,6 +31,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
 
         fondo = new Fondo();
         personaje = new Personaje();
+        obstaculo = new Obstaculo();
 
         ventana.addKeyListener(this);
         ventana.add(this);
@@ -51,6 +54,21 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
             }
         });
         movimientoPersonaje.start();
+
+        // Crear el hilo para el movimiento del personaje
+        movimientoObstaculo = new Thread(new Runnable() {
+            public void run() {
+                while (true) {
+                    obstaculo.actualizarObstaculos();
+                    try {
+                        Thread.sleep(16); // 60 fps
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        movimientoObstaculo.start();
 
         // Crear el hilo para el movimiento del personaje
         movimientoFondo = new Thread(new Runnable() {
@@ -119,6 +137,9 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
         g.fillRect(0, 0, getWidth(), getHeight());
         fondo.dibujar(g, personaje.getX());
         personaje.dibujar(g);
+        for (Obstaculo obs : Obstaculo.getObstaculos()) {
+            obs.dibujar(g);
+        }
     }
 
 }
