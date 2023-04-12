@@ -1,6 +1,5 @@
 import java.awt.Graphics;
 import java.awt.Image;
-
 import javax.swing.ImageIcon;
 
 public class Fondo {
@@ -28,9 +27,6 @@ public class Fondo {
         if (posX <= limder) {
             posX = limder;
         }
-
-        System.out.println("posicion: " + posicion);
-        System.out.println("posX: " + posX);
 
         if (posX == -1000) {
             System.out.println("Felicidades 1000 puntos");

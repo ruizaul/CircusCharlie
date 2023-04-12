@@ -62,7 +62,8 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
         movimientoObstaculo = new Thread(new Runnable() {
             public void run() {
                 while (true) {
-                    obstaculo.actualizarObstaculos();
+                    obstaculo.actualizarObstaculos(personaje.getX(), personaje.getY());
+                    obstaculo.colisionaConPersonaje(personaje.getX(), personaje.getY());
                     try {
                         Thread.sleep(16); // 60 fps
                     } catch (InterruptedException e) {
@@ -113,6 +114,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
+
         repaint();
     }
 

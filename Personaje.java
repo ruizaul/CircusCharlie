@@ -1,9 +1,10 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import java.awt.Rectangle;
 
 public class Personaje {
-    private Image imagen;
+
     private int x, y;
     public static int VelocidadX, VelocidadY;
     private boolean saltando;
@@ -37,9 +38,11 @@ public class Personaje {
         saltando = false;
         limiteIzquierdo = 0;
         limiteDerecho = 300;
+
     }
 
     public void mover() {
+
         y += VelocidadY;
         x += VelocidadX;
 
@@ -64,6 +67,7 @@ public class Personaje {
             caminando = false;
             VelocidadX = 0;
         }
+
     }
 
     public void dibujar(Graphics g) {

@@ -3,6 +3,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import java.util.Random;
 import java.util.ArrayList;
+import java.awt.Rectangle;
 
 public class Obstaculo {
 
@@ -11,7 +12,6 @@ public class Obstaculo {
 
     private int contador = 0;
     private static final int INTERVALO = 10;
-
     private boolean caminando;
     private Image imagenParado;
     private Image imagenCaminando;
@@ -48,7 +48,7 @@ public class Obstaculo {
         }
     }
 
-    public void actualizarObstaculos() {
+    public void actualizarObstaculos(int PosicionPersonajeX, int PosicionPersonajeY) {
         contador++;
 
         if (contador >= INTERVALO) {
@@ -64,11 +64,17 @@ public class Obstaculo {
         for (int i = obstaculos.size() - 1; i >= 0; i--) {
             Obstaculo obs = obstaculos.get(i);
             obs.mover();
+
             if (obs.getX() <= 0) {
                 obstaculos.remove(i);
             }
 
+            if (obs.colisionaConPersonaje(PosicionPersonajeX, PosicionPersonajeY)) {
+                // Aquí puedes agregar el código que corresponda para notificar al usuario o
+                // tomar alguna acción en tu juego
+            }
         }
+
     }
 
     public static ArrayList<Obstaculo> getObstaculos() {
@@ -89,6 +95,17 @@ public class Obstaculo {
 
     public int getVelocidadY() {
         return VelocidadY;
+    }
+
+    public boolean colisionaConPersonaje(int PosicionPersonajeX, int PosicionPersonajeY) {
+        Rectangle rectanguloObstaculo = new Rectangle(x, y, 50, 50);
+        Rectangle rectanguloPersonaje = new Rectangle(PosicionPersonajeX, PosicionPersonajeY, 35, 35);
+
+        if (rectanguloObstaculo.intersects(rectanguloPersonaje)) {
+            System.out.println("Colisión detectada");
+            return true;
+        }
+        return false;
     }
 
 }
