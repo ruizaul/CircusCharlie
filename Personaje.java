@@ -1,21 +1,26 @@
 import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import java.awt.Rectangle;
 
-public class Personaje {
+public class Personaje extends Thread {
 
     private int x, y;
     public static int VelocidadX, VelocidadY;
     private boolean saltando;
+
     private static final int GRAVEDAD = 1;
     private int limiteDerecho;
     private int limiteIzquierdo;
 
     private boolean caminando;
+    private boolean derrotado;
+
     private Image imagenParado;
     private Image imagenCaminando;
     private Image imagenSaltando;
+    private Image imagenDerrotado;
+
+    private Sonido sonidoSaltar;
 
     public Personaje() {
         ImageIcon ii1 = new ImageIcon(getClass().getResource("/Resources/player1.png"));
@@ -30,7 +35,13 @@ public class Personaje {
         Image img3 = ii3.getImage();
         imagenSaltando = img3.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
+        ImageIcon ii4 = new ImageIcon(getClass().getResource("/Resources/playerDefeated.png"));
+        Image img4 = ii4.getImage();
+        imagenDerrotado = img4.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+
         caminando = false;
+        derrotado = false;
+
         x = 0;
         y = 0;
         VelocidadX = 0;
@@ -39,6 +50,7 @@ public class Personaje {
         limiteIzquierdo = 0;
         limiteDerecho = 300;
 
+        sonidoSaltar = new Sonido("Resources/jumpingSound.wav");
     }
 
     public void mover() {
@@ -58,6 +70,7 @@ public class Personaje {
             y = 185;
             VelocidadY = 0;
             saltando = false;
+
         } else {
             VelocidadY += GRAVEDAD; // Aplicamos efecto de gravedad
         }
@@ -71,18 +84,15 @@ public class Personaje {
     }
 
     public void dibujar(Graphics g) {
-        if (caminando) {
+        if (derrotado) {
+            g.drawImage(imagenDerrotado, x, y, null);
+        } else if (saltando) {
+            g.drawImage(imagenSaltando, x, y, null);
+        } else if (caminando) {
+            g.drawImage(imagenCaminando, x, y, null);
+        } else {
             g.drawImage(imagenParado, x, y, null);
         }
-
-        if (!caminando) {
-            g.drawImage(imagenCaminando, x, y, null);
-        }
-
-        if (saltando) {
-            g.drawImage(imagenSaltando, x, y, null);
-        }
-
     }
 
     public void avanzar() {
@@ -100,6 +110,7 @@ public class Personaje {
     public void saltar() {
 
         if (!saltando) {
+            sonidoSaltar.reproducir(false);
             VelocidadY = -18; // Velocidad hacia arriba
             saltando = true;
         }
@@ -107,6 +118,7 @@ public class Personaje {
 
     public void saltarDerecha() {
         if (!saltando) {
+            sonidoSaltar.reproducir(false);
             VelocidadY = -18; // Velocidad hacia arriba
             VelocidadX = 30; // Velocidad hacia la derecha
             saltando = true;
@@ -115,6 +127,7 @@ public class Personaje {
 
     public void saltarIzquierda() {
         if (!saltando) {
+            sonidoSaltar.reproducir(false);
             VelocidadY = -18; // Velocidad hacia arriba
             VelocidadX = -30; // Velocidad hacia la derecha
             saltando = true;
@@ -135,6 +148,12 @@ public class Personaje {
 
     public int getVelocidadY() {
         return VelocidadY;
+    }
+
+    public void derrotado(Boolean status) {
+        if (status) {
+            derrotado = true;
+        }
     }
 
 }

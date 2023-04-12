@@ -11,10 +11,12 @@ public class Obstaculo {
     public static int VelocidadX, VelocidadY;
 
     private int contador = 0;
-    private static final int INTERVALO = 10;
+    private static final int INTERVALO = 15;
     private boolean caminando;
     private Image imagenParado;
     private Image imagenCaminando;
+
+    private boolean activo = true;
 
     public static ArrayList<Obstaculo> obstaculos = new ArrayList<Obstaculo>();
 
@@ -34,17 +36,21 @@ public class Obstaculo {
 
     }
 
+    public static void resetear() {
+        obstaculos.clear();
+        VelocidadX = 0;
+    }
+
     public void mover() {
         x -= VelocidadX;
+        caminando = !caminando; // cambia el valor de caminando
     }
 
     public void dibujar(Graphics g) {
         if (caminando) {
-            g.drawImage(imagenParado, x, y, null);
-        }
-
-        if (!caminando) {
             g.drawImage(imagenCaminando, x, y, null);
+        } else if (!caminando) {
+            g.drawImage(imagenParado, x, y, null);
         }
     }
 
@@ -53,12 +59,13 @@ public class Obstaculo {
 
         if (contador >= INTERVALO) {
             Random rnd = new Random();
-            if (rnd.nextDouble() < 0.11) {
+            if (rnd.nextDouble() < 0.14) {
                 obstaculos.add(new Obstaculo());
                 VelocidadX = 5;
                 caminando = true;
             }
             contador = 0;
+            caminando = !caminando; // cambio de imagen
         }
 
         for (int i = obstaculos.size() - 1; i >= 0; i--) {
@@ -70,11 +77,9 @@ public class Obstaculo {
             }
 
             if (obs.colisionaConPersonaje(PosicionPersonajeX, PosicionPersonajeY)) {
-                // Aquí puedes agregar el código que corresponda para notificar al usuario o
-                // tomar alguna acción en tu juego
+                setActivo(false);
             }
         }
-
     }
 
     public static ArrayList<Obstaculo> getObstaculos() {
@@ -99,13 +104,21 @@ public class Obstaculo {
 
     public boolean colisionaConPersonaje(int PosicionPersonajeX, int PosicionPersonajeY) {
         Rectangle rectanguloObstaculo = new Rectangle(x, y, 50, 50);
-        Rectangle rectanguloPersonaje = new Rectangle(PosicionPersonajeX, PosicionPersonajeY, 35, 35);
+        Rectangle rectanguloPersonaje = new Rectangle(PosicionPersonajeX, PosicionPersonajeY, 30, 30);
 
         if (rectanguloObstaculo.intersects(rectanguloPersonaje)) {
             System.out.println("Colisión detectada");
             return true;
         }
         return false;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
 }
