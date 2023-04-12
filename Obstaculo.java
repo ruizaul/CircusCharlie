@@ -36,17 +36,12 @@ public class Obstaculo {
 
     }
 
-    public static void resetear() {
-        obstaculos.clear();
-        VelocidadX = 0;
-    }
-
-    public void mover() {
+    public synchronized void mover() {
         x -= VelocidadX;
         caminando = !caminando; // cambia el valor de caminando
     }
 
-    public void dibujar(Graphics g) {
+    public synchronized void dibujar(Graphics g) {
         if (caminando) {
             g.drawImage(imagenCaminando, x, y, null);
         } else if (!caminando) {
@@ -54,12 +49,12 @@ public class Obstaculo {
         }
     }
 
-    public void actualizarObstaculos(int PosicionPersonajeX, int PosicionPersonajeY) {
+    public synchronized void actualizarObstaculos(int PosicionPersonajeX, int PosicionPersonajeY) {
         contador++;
 
         if (contador >= INTERVALO) {
             Random rnd = new Random();
-            if (rnd.nextDouble() < 0.14) {
+            if (rnd.nextDouble() < 0.08) {
                 obstaculos.add(new Obstaculo());
                 VelocidadX = 5;
                 caminando = true;
@@ -82,27 +77,27 @@ public class Obstaculo {
         }
     }
 
-    public static ArrayList<Obstaculo> getObstaculos() {
+    public synchronized static ArrayList<Obstaculo> getObstaculos() {
         return obstaculos;
     }
 
-    public int getX() {
+    public synchronized int getX() {
         return x;
     }
 
-    public int getY() {
+    public synchronized int getY() {
         return y;
     }
 
-    public int getVelocidadX() {
+    public synchronized int getVelocidadX() {
         return VelocidadX;
     }
 
-    public int getVelocidadY() {
+    public synchronized int getVelocidadY() {
         return VelocidadY;
     }
 
-    public boolean colisionaConPersonaje(int PosicionPersonajeX, int PosicionPersonajeY) {
+    public synchronized boolean colisionaConPersonaje(int PosicionPersonajeX, int PosicionPersonajeY) {
         Rectangle rectanguloObstaculo = new Rectangle(x, y, 50, 50);
         Rectangle rectanguloPersonaje = new Rectangle(PosicionPersonajeX, PosicionPersonajeY, 30, 30);
 
@@ -113,12 +108,26 @@ public class Obstaculo {
         return false;
     }
 
-    public boolean isActivo() {
+    public synchronized boolean isActivo() {
         return activo;
     }
 
-    public void setActivo(boolean activo) {
+    public synchronized void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public synchronized void reset() {
+        obstaculos.clear();
+        VelocidadX = 0;
+        activo = true;
+
+        for (int i = obstaculos.size() - 1; i >= 0; i--) {
+            Obstaculo obs = obstaculos.get(i);
+
+            if (obs.getX() <= 0) {
+                obstaculos.remove(i);
+            }
+        }
     }
 
 }

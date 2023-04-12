@@ -13,7 +13,7 @@ public class Fondo {
         posX = 0;
     }
 
-    public void mover(int velocidad, int posicion) {
+    public synchronized void mover(int velocidad, int posicion) {
         // Movemos el fondo a la izquierda o a la derecha, según la posición del
         // personaje
         if (velocidad != 0) {
@@ -33,12 +33,18 @@ public class Fondo {
         }
     }
 
-    public void dibujar(Graphics g, int personajeX) {
+    public synchronized void dibujar(Graphics g, int personajeX) {
         g.drawImage(imagen, posX, -60, null);
     }
 
-    public int getposX() {
+    public synchronized int getposX() {
         return posX;
+    }
+
+    public synchronized void reset() {
+        limizq = 0;
+        limder = -2330;
+        posX = 0;
     }
 
 }

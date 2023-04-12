@@ -60,7 +60,20 @@ public class Personaje extends Thread {
         sonidoSaltar = new Sonido("Resources/jumpingSound.wav");
     }
 
-    public void mover(int posX) {
+    public void reset() {
+        caminando = false;
+        derrotado = false;
+        gano = false;
+        x = 0;
+        y = 0;
+        VelocidadX = 0;
+        VelocidadY = 0;
+        saltando = false;
+        limiteIzquierdo = 0;
+        limiteDerecho = 300;
+    }
+
+    public synchronized void mover(int posX) {
 
         y += VelocidadY;
         x += VelocidadX;
@@ -100,7 +113,7 @@ public class Personaje extends Thread {
 
     }
 
-    public void dibujar(Graphics g) {
+    public synchronized void dibujar(Graphics g) {
         if (derrotado) {
             g.drawImage(imagenDerrotado, x, y, null);
         } else if (saltando) {
@@ -114,19 +127,19 @@ public class Personaje extends Thread {
         }
     }
 
-    public void avanzar() {
+    public synchronized void avanzar() {
         VelocidadX = 5;
         caminando = true;
 
     }
 
-    public void retroceder() {
+    public synchronized void retroceder() {
         VelocidadX = -5;
         caminando = true;
 
     }
 
-    public void saltar() {
+    public synchronized void saltar() {
 
         if (!saltando) {
             sonidoSaltar.reproducir(false);
@@ -135,7 +148,7 @@ public class Personaje extends Thread {
         }
     }
 
-    public void saltarDerecha() {
+    public synchronized void saltarDerecha() {
         if (!saltando) {
             sonidoSaltar.reproducir(false);
             VelocidadY = -18; // Velocidad hacia arriba
@@ -144,7 +157,7 @@ public class Personaje extends Thread {
         }
     }
 
-    public void saltarIzquierda() {
+    public synchronized void saltarIzquierda() {
         if (!saltando) {
             sonidoSaltar.reproducir(false);
             VelocidadY = -18; // Velocidad hacia arriba
@@ -153,29 +166,29 @@ public class Personaje extends Thread {
         }
     }
 
-    public int getX() {
+    public synchronized int getX() {
         return x;
     }
 
-    public int getY() {
+    public synchronized int getY() {
         return y;
     }
 
-    public int getVelocidadX() {
+    public synchronized int getVelocidadX() {
         return VelocidadX;
     }
 
-    public int getVelocidadY() {
+    public synchronized int getVelocidadY() {
         return VelocidadY;
     }
 
-    public void derrotado(Boolean status) {
+    public synchronized void derrotado(Boolean status) {
         if (status) {
             derrotado = true;
         }
     }
 
-    public Boolean ganador() {
+    public synchronized Boolean ganador() {
         return gano;
     }
 

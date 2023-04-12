@@ -15,7 +15,7 @@ public class Sonido {
         }
     }
 
-    public void reproducir(boolean enBucle) {
+    public synchronized void reproducir(boolean enBucle) {
         if (clip != null) {
             clip.stop();
             clip.setFramePosition(0);
@@ -27,7 +27,7 @@ public class Sonido {
         }
     }
 
-    public void detener() {
+    public synchronized void detener() {
         if (clip != null) {
             clip.stop();
         }

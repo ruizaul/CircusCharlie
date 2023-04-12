@@ -12,6 +12,9 @@ import javax.swing.JButton;
 public class Juego extends JPanel implements KeyListener, ActionListener {
     private JFrame ventana;
     private JButton botonStart;
+    private JButton botonPausar; // Nuevo botón para pausar/reanudar el juego
+    private JButton botonReanudar;
+    private JButton botonReset; // Nuevo botón para pausar/reanudar el juego
 
     private Fondo fondo;
     private Personaje personaje;
@@ -29,19 +32,38 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
     private Thread musicaFondo;
 
     private boolean EstadoJuego = false;
-    private boolean juegoPausado = false;
+    private boolean pausa = false; // Variable para controlar la pausa
+    private boolean reinicio = false;
 
-    public void iniciarJuego() {
-        ventana = new JFrame("Mi juego");
+    public void Ventana() {
+        ventana = new JFrame("Circus Charlie");
         ventana.setSize(800, 400);
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ventana.setLocationRelativeTo(null);
 
         botonStart = new JButton("Start");
-        botonStart.setBounds(350, 150, 100, 40); // Colocar el botón en el centro de la pantalla
+        botonStart.setBounds(350, 150, 100, 40);
         add(botonStart);
         botonStart.setFocusable(false);
         botonStart.addActionListener(this);
+
+        botonPausar = new JButton("Pausar");
+        botonPausar.setBounds(350, 200, 100, 40); // Colocar el botón en la pantalla
+        add(botonPausar);
+        botonPausar.setFocusable(false);
+        botonPausar.addActionListener(this); // Agregar un ActionListener para controlar la pausa
+
+        botonReanudar = new JButton("Reanudar");
+        botonReanudar.setBounds(350, 250, 100, 40); // Colocar el botón en la pantalla
+        add(botonReanudar);
+        botonReanudar.setFocusable(false);
+        botonReanudar.addActionListener(this); // Agregar un ActionListener para controlar la pausa
+
+        botonReset = new JButton("Reiniciar");
+        botonReset.setBounds(350, 300, 100, 40); // Colocar el botón en la pantalla
+        add(botonReset);
+        botonReset.setFocusable(false);
+        botonReset.addActionListener(this); // Agregar un ActionListener para controlar la pausa
 
         sonidoFondo = new Sonido("Resources/Music.wav");
         sonidoMuerte = new Sonido("Resources/defeatSound.wav");
@@ -58,90 +80,133 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
 
         temporizador = new Timer(1000 / 60, this);
         temporizador.start();
+    }
 
+    public synchronized void IniciarJuego() {
+        // Crear el hilo para el movimiento del personaje
+        movimientoPersonaje = new Thread(new Runnable() {
+            public void run() {
+                while (EstadoJuego) {
+                    if (!pausa) {
+                        personaje.mover(fondo.getposX());
+                    }
+                    try {
+                        Thread.sleep(16); // 60 fps
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        movimientoPersonaje.start();
+
+        // Crear el hilo para el movimiento del personaje
+        movimientoObstaculo = new Thread(new Runnable() {
+            public void run() {
+                while (EstadoJuego) {
+                    if (!pausa) {
+                        obstaculo.actualizarObstaculos(personaje.getX(), personaje.getY());
+                        obstaculo.colisionaConPersonaje(personaje.getX(), personaje.getY());
+                    }
+
+                    try {
+                        Thread.sleep(16); // 60 fps
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        movimientoObstaculo.start();
+
+        // Crear el hilo para el movimiento del personaje
+        movimientoObstaculoSaltarin = new Thread(new Runnable() {
+            public void run() {
+                while (EstadoJuego) {
+                    if (!pausa) {
+                        obstaculosaltarin.actualizarObstaculos(personaje.getX(), personaje.getY());
+                        obstaculosaltarin.colisionaConPersonaje(personaje.getX(), personaje.getY());
+                    }
+
+                    try {
+                        Thread.sleep(16); // 60 fps
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        movimientoObstaculoSaltarin.start();
+
+        // Crear el hilo para el movimiento del personaje
+        movimientoFondo = new Thread(new Runnable() {
+            public void run() {
+                while (EstadoJuego) {
+                    if (!pausa) {
+                        fondo.mover(personaje.getVelocidadX(), personaje.getX());
+                    }
+
+                    try {
+                        Thread.sleep(6); // 60 fps
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        movimientoFondo.start();
+
+        // Crear el hilo para la música de fondo
+        musicaFondo = new Thread(new Runnable() {
+            public void run() {
+                if (!pausa) {
+                    sonidoFondo.reproducir(true);
+                }
+                try {
+                    Thread.sleep(16);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        musicaFondo.start();
     }
 
     public void actionPerformed(ActionEvent e) {
 
         if (e.getSource() == botonStart) {
             EstadoJuego = true;
-            System.out.println("¡Juego empezado!");
-            // Crear el hilo para el movimiento del personaje
-            movimientoPersonaje = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        if (!juegoPausado) {
-                            personaje.mover(fondo.getposX());
-                        }
-                        try {
-                            Thread.sleep(16); // 60 fps
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            movimientoPersonaje.start();
+            pausa = false;
+            IniciarJuego();
+            System.out.println("¡A darle!");
+        }
+        if (e.getSource() == botonPausar) {
+            System.out.println("¡Pausa!");
+            sonidoFondo.detener();
+            pausa = true;
+        }
+        if (e.getSource() == botonReanudar) {
+            System.out.println("!Reanuda!");
+            if (EstadoJuego) {
+                sonidoFondo.reproducir(true);
+            }
+            pausa = false;
+        }
+        if (e.getSource() == botonReset) {
+            movimientoPersonaje.interrupt();
+            movimientoObstaculo.interrupt();
+            movimientoObstaculoSaltarin.interrupt();
+            movimientoFondo.interrupt();
 
-            // Crear el hilo para el movimiento del personaje
-            movimientoObstaculo = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        if (!juegoPausado) {
-                            obstaculo.actualizarObstaculos(personaje.getX(), personaje.getY());
-                            obstaculo.colisionaConPersonaje(personaje.getX(), personaje.getY());
-                        }
-                        try {
-                            Thread.sleep(16); // 60 fps
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            movimientoObstaculo.start();
+            EstadoJuego = true;
+            pausa = false;
+            reinicio = true;
 
-            // Crear el hilo para el movimiento del personaje
-            movimientoObstaculoSaltarin = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        if (!juegoPausado) {
-                            obstaculosaltarin.actualizarObstaculos();
-                        }
-                        try {
-                            Thread.sleep(16); // 60 fps
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            movimientoObstaculoSaltarin.start();
-
-            // Crear el hilo para el movimiento del personaje
-            movimientoFondo = new Thread(new Runnable() {
-                public void run() {
-                    while (true) {
-                        if (!juegoPausado) {
-                            fondo.mover(personaje.getVelocidadX(), personaje.getX());
-                        }
-                        try {
-                            Thread.sleep(6); // 60 fps
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            movimientoFondo.start();
-
-            // Crear el hilo para la música de fondo
-            musicaFondo = new Thread(new Runnable() {
-                public void run() {
-                    sonidoFondo.reproducir(true);
-                }
-            });
-            musicaFondo.start();
+            fondo.reset();
+            personaje.reset();
+            obstaculo.reset();
+            obstaculosaltarin.reset();
         }
 
         if (EstadoJuego) {
@@ -150,16 +215,14 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
             obstaculo.colisionaConPersonaje(personaje.getX(), personaje.getY());
             repaint();
 
-            if (!obstaculo.isActivo()) {
+            if (!obstaculo.isActivo() || !obstaculosaltarin.isActivo()) {
                 // Si el obstáculo ha colisionado, detenemos el juego
                 personaje.derrotado(true);
-
                 Timer timer = new Timer(100, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         // Aquí colocas las acciones que deseas realizar después de un segundo
                         temporizador.stop();
-                        juegoPausado = false;
                         movimientoPersonaje.interrupt();
                         movimientoObstaculo.interrupt();
                         movimientoObstaculoSaltarin.interrupt();
@@ -167,8 +230,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                         sonidoFondo.detener();
                         sonidoMuerte.reproducir(false);
                         EstadoJuego = false;
-                        botonStart.setEnabled(true);
-                        System.out.println("¡Juego terminado!");
+                        System.out.println("¡Ouch!");
                     }
                 });
                 timer.setRepeats(false);
@@ -177,10 +239,13 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
         }
 
         if (personaje.ganador()) {
+            repaint();
             Timer timer = new Timer(100, new ActionListener() {
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     // Aquí colocas las acciones que deseas realizar después de un segundo
+                    EstadoJuego = false;
                     temporizador.stop();
                     movimientoPersonaje.interrupt();
                     movimientoObstaculo.interrupt();
@@ -188,11 +253,11 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                     movimientoFondo.interrupt();
                     sonidoFondo.detener();
                     sonidoMuerte.reproducir(false);
-                    EstadoJuego = false;
                     botonStart.setEnabled(true);
                     SonidoGanador.reproducir(false);
                     System.out.println("¡Juego terminado!");
                 }
+
             });
             timer.setRepeats(false);
             timer.start();
@@ -213,14 +278,23 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                 break;
 
             case KeyEvent.VK_SPACE:
+                if (!EstadoJuego) {
+                    break;
+                }
                 personaje.saltar();
                 break;
 
             case KeyEvent.VK_E:
+                if (!EstadoJuego) {
+                    break;
+                }
                 personaje.saltarDerecha();
                 break;
 
             case KeyEvent.VK_Q:
+                if (!EstadoJuego) {
+                    break;
+                }
                 personaje.saltarIzquierda();
                 break;
 

@@ -3,6 +3,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import java.util.Random;
 import java.util.ArrayList;
+import java.awt.Rectangle;
 
 public class ObstaculoSaltarin {
 
@@ -17,6 +18,8 @@ public class ObstaculoSaltarin {
     private Image imagenParado;
     private Image imagenCaminando;
     private Image imagenSaltando;
+
+    private boolean activo = true;
     private boolean saltarEnPosicionInicial = false; // Nueva variable
 
     public static ArrayList<ObstaculoSaltarin> obstaculosSaltarines = new ArrayList<ObstaculoSaltarin>();
@@ -42,7 +45,7 @@ public class ObstaculoSaltarin {
         saltando = false;
     }
 
-    public void mover() {
+    public synchronized void mover() {
         y += VelocidadY;
         x -= VelocidadX;
 
@@ -63,7 +66,7 @@ public class ObstaculoSaltarin {
 
     }
 
-    public void dibujar(Graphics g) {
+    public synchronized void dibujar(Graphics g) {
         if (caminando) {
             g.drawImage(imagenParado, x, y, null);
         }
@@ -78,7 +81,7 @@ public class ObstaculoSaltarin {
 
     }
 
-    public void actualizarObstaculos() {
+    public synchronized void actualizarObstaculos(int PosicionPersonajeX, int PosicionPersonajeY) {
 
         contador++;
 
@@ -98,10 +101,14 @@ public class ObstaculoSaltarin {
             if (obs.getX() <= 0) {
                 obstaculosSaltarines.remove(i);
             }
+
+            if (obs.colisionaConPersonaje(PosicionPersonajeX, PosicionPersonajeY)) {
+                setActivo(false);
+            }
         }
     }
 
-    public void saltar() {
+    public synchronized void saltar() {
         if (saltarEnPosicionInicial && !saltando) {
             VelocidadY = -18;
             VelocidadX = 10; // Velocidad hacia la derecha
@@ -109,24 +116,57 @@ public class ObstaculoSaltarin {
         }
     }
 
-    public static ArrayList<ObstaculoSaltarin> getObstaculos() {
+    public synchronized static ArrayList<ObstaculoSaltarin> getObstaculos() {
         return obstaculosSaltarines;
     }
 
-    public int getX() {
+    public synchronized int getX() {
         return x;
     }
 
-    public int getY() {
+    public synchronized int getY() {
         return y;
     }
 
-    public int getVelocidadX() {
+    public synchronized int getVelocidadX() {
         return VelocidadX;
     }
 
-    public int getVelocidadY() {
+    public synchronized int getVelocidadY() {
         return VelocidadY;
+    }
+
+    public synchronized boolean colisionaConPersonaje(int PosicionPersonajeX, int PosicionPersonajeY) {
+        Rectangle rectanguloObstaculo = new Rectangle(x, y, 50, 50);
+        Rectangle rectanguloPersonaje = new Rectangle(PosicionPersonajeX, PosicionPersonajeY, 30, 30);
+
+        if (rectanguloObstaculo.intersects(rectanguloPersonaje)) {
+            System.out.println("Colisión detectada");
+            return true;
+        }
+        return false;
+    }
+
+    public synchronized boolean isActivo() {
+        return activo;
+    }
+
+    public synchronized void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+    public void reset() {
+        obstaculosSaltarines.clear();
+        VelocidadX = 0;
+        activo = true;
+
+        for (int i = obstaculosSaltarines.size() - 1; i >= 0; i--) {
+            ObstaculoSaltarin obs = obstaculosSaltarines.get(i);
+
+            if (obs.getX() <= 0) {
+                obstaculosSaltarines.remove(i);
+            }
+        }
     }
 
 }
