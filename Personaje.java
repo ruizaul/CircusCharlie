@@ -13,12 +13,14 @@ public class Personaje extends Thread {
     private int limiteIzquierdo;
 
     private boolean caminando;
+    private boolean gano;
     private boolean derrotado;
 
     private Image imagenParado;
     private Image imagenCaminando;
     private Image imagenSaltando;
     private Image imagenDerrotado;
+    private Image imagenGano;
 
     private Sonido sonidoSaltar;
 
@@ -39,8 +41,13 @@ public class Personaje extends Thread {
         Image img4 = ii4.getImage();
         imagenDerrotado = img4.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
 
+        ImageIcon ii5 = new ImageIcon(getClass().getResource("/Resources/playerWin.png"));
+        Image img5 = ii5.getImage();
+        imagenGano = img5.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+
         caminando = false;
         derrotado = false;
+        gano = false;
 
         x = 0;
         y = 0;
@@ -53,10 +60,12 @@ public class Personaje extends Thread {
         sonidoSaltar = new Sonido("Resources/jumpingSound.wav");
     }
 
-    public void mover() {
+    public void mover(int posX) {
 
         y += VelocidadY;
         x += VelocidadX;
+
+        System.out.println(posX);
 
         if (x >= limiteDerecho) {
             x = limiteDerecho;
@@ -70,9 +79,17 @@ public class Personaje extends Thread {
             y = 185;
             VelocidadY = 0;
             saltando = false;
-
         } else {
             VelocidadY += GRAVEDAD; // Aplicamos efecto de gravedad
+        }
+
+        if (posX == -2330) {
+            y = 100;
+            VelocidadY = 0;
+            saltando = false;
+            gano = true;
+        } else {
+            gano = false;
         }
 
         // Resetear la velocidad X del personaje cuando no se está moviendo
@@ -90,6 +107,8 @@ public class Personaje extends Thread {
             g.drawImage(imagenSaltando, x, y, null);
         } else if (caminando) {
             g.drawImage(imagenCaminando, x, y, null);
+        } else if (gano) {
+            g.drawImage(imagenGano, x, y, null);
         } else {
             g.drawImage(imagenParado, x, y, null);
         }
@@ -154,6 +173,10 @@ public class Personaje extends Thread {
         if (status) {
             derrotado = true;
         }
+    }
+
+    public Boolean ganador() {
+        return gano;
     }
 
 }

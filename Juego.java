@@ -20,6 +20,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
     private Timer temporizador;
     private Sonido sonidoFondo;
     private Sonido sonidoMuerte;
+    private Sonido SonidoGanador;
 
     private Thread movimientoPersonaje;
     private Thread movimientoObstaculo;
@@ -44,6 +45,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
 
         sonidoFondo = new Sonido("Resources/Music.wav");
         sonidoMuerte = new Sonido("Resources/defeatSound.wav");
+        SonidoGanador = new Sonido("Resources/winSound.wav");
 
         fondo = new Fondo();
         personaje = new Personaje();
@@ -57,13 +59,6 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
         temporizador = new Timer(1000 / 60, this);
         temporizador.start();
 
-        // Crear el hilo para la música de fondo
-        musicaFondo = new Thread(new Runnable() {
-            public void run() {
-                sonidoFondo.reproducir(true);
-            }
-        });
-        musicaFondo.start();
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -76,7 +71,7 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                 public void run() {
                     while (true) {
                         if (!juegoPausado) {
-                            personaje.mover();
+                            personaje.mover(fondo.getposX());
                         }
                         try {
                             Thread.sleep(16); // 60 fps
@@ -139,6 +134,14 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                 }
             });
             movimientoFondo.start();
+
+            // Crear el hilo para la música de fondo
+            musicaFondo = new Thread(new Runnable() {
+                public void run() {
+                    sonidoFondo.reproducir(true);
+                }
+            });
+            musicaFondo.start();
         }
 
         if (EstadoJuego) {
@@ -171,6 +174,28 @@ public class Juego extends JPanel implements KeyListener, ActionListener {
                 timer.setRepeats(false);
                 timer.start();
             }
+        }
+
+        if (personaje.ganador()) {
+            Timer timer = new Timer(100, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Aquí colocas las acciones que deseas realizar después de un segundo
+                    temporizador.stop();
+                    movimientoPersonaje.interrupt();
+                    movimientoObstaculo.interrupt();
+                    movimientoObstaculoSaltarin.interrupt();
+                    movimientoFondo.interrupt();
+                    sonidoFondo.detener();
+                    sonidoMuerte.reproducir(false);
+                    EstadoJuego = false;
+                    botonStart.setEnabled(true);
+                    SonidoGanador.reproducir(false);
+                    System.out.println("¡Juego terminado!");
+                }
+            });
+            timer.setRepeats(false);
+            timer.start();
         }
 
     }

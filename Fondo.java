@@ -28,12 +28,17 @@ public class Fondo {
             posX = limder;
         }
 
-        if (posX == -1000) {
-            System.out.println("Felicidades 1000 puntos");
+        if (posX == -2330) {
+            System.out.println("Ganaste");
         }
     }
 
     public void dibujar(Graphics g, int personajeX) {
         g.drawImage(imagen, posX, -60, null);
     }
+
+    public int getposX() {
+        return posX;
+    }
+
 }
